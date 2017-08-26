@@ -5,6 +5,7 @@ Python package for reading items from receipt.
 ## requirements
 
 - [tesseract](https://github.com/tesseract-ocr/tesseract)
+- tested on python 3.6
 
 ## installation
 
