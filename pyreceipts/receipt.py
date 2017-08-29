@@ -14,7 +14,7 @@ class Receipt:
         self.tmp_file_path = '%s_tmp.jpg' % file_name
         self.original_file = Image.open(self.file_name)
 
-        self._enlarge_image(self.original_file)
+        self._process(self.original_file)
         self.image = Image.open(self.tmp_file_path)
 
     def _save_to_tmp(self, img):
@@ -32,6 +32,16 @@ class Receipt:
             height = int(float(img.size[1])*float(width_percent))
             img = img.resize((self.MIN_WIDTH, height), Image.ANTIALIAS)
         self._save_to_tmp(img)
+        return img
+
+    def _greyscale(self, img):
+        img = img.convert('L')
+        self._save_to_tmp(img)
+        return img
+
+    def _process(self, img):
+        img = self._enlarge_image(img)
+        img = self._greyscale(img)
         return img
 
     def read(self):
