@@ -23,9 +23,10 @@ class Receipt:
     def _process(self):
         # File should have at least 900px width to be read properly
         img = Image.open(self.file_name)
-        width_percent = (self.MIN_WIDTH/float(img.size[0]))
-        height = int(float(img.size[1])*float(width_percent))
-        img = img.resize((self.MIN_WIDTH, height), Image.ANTIALIAS)
+        if img.size[0] < self.MIN_WIDTH:
+            width_percent = (self.MIN_WIDTH/float(img.size[0]))
+            height = int(float(img.size[1])*float(width_percent))
+            img = img.resize((self.MIN_WIDTH, height), Image.ANTIALIAS)
         img.save(self.tmp_file_path)
         return Image.open(self.tmp_file_path)
 
