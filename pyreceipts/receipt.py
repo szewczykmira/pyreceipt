@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image, ImageEnhance
 import pytesseract
 import tempfile
 
@@ -39,9 +39,17 @@ class Receipt:
         self._save_to_tmp(img)
         return img
 
+    def _contrast(self, img):
+        contrast = ImageEnhance.Contrast(img)
+        img = contrast.enhance(3)
+        self._save_to_tmp(img)
+        return img
+
+
     def _process(self, img):
         img = self._enlarge_image(img)
         img = self._greyscale(img)
+        img = self._contrast(img)
         return img
 
     def read(self):
