@@ -24,12 +24,14 @@ class Receipt:
         # File should have at least 900px width to be read properly
         img = Image.open(self.file_name)
         if img.size[0] < self.MIN_WIDTH:
-            width_percent = (self.MIN_WIDTH/float(img.size[0]))
-            height = int(float(img.size[1])*float(width_percent))
-            img = img.resize((self.MIN_WIDTH, height), Image.ANTIALIAS)
+            img = self._enlarge_image(img)
         img.save(self.tmp_file_path)
         return Image.open(self.tmp_file_path)
 
+    def _enlarge_image(self, img):
+        width_percent = (self.MIN_WIDTH/float(img.size[0]))
+        height = int(float(img.size[1])*float(width_percent))
+        return img.resize((self.MIN_WIDTH, height), Image.ANTIALIAS)
 
     def read(self):
         return pytesseract.image_to_string(self.image)
