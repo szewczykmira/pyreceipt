@@ -1,7 +1,8 @@
 import os
-from PIL import Image, ImageEnhance
+from PIL import Image
 import pytesseract
-import tempfile
+
+from .prepare_image import greyscale, contrast, remove_noise, enlarge_image
 
 
 class Receipt:
@@ -25,31 +26,12 @@ class Receipt:
         if not os.path.exists(file_name):
             raise ValueError('This file does not exists!')
 
-    def _enlarge_image(self, img):
-        # File should have at least 900px width to be read properly
-        if img.size[0] < self.MIN_WIDTH:
-            width_percent = (self.MIN_WIDTH/float(img.size[0]))
-            height = int(float(img.size[1])*float(width_percent))
-            img = img.resize((self.MIN_WIDTH, height), Image.ANTIALIAS)
-        self._save_to_tmp(img)
-        return img
-
-    def _greyscale(self, img):
-        img = img.convert('L')
-        self._save_to_tmp(img)
-        return img
-
-    def _contrast(self, img):
-        contrast = ImageEnhance.Contrast(img)
-        img = contrast.enhance(3)
-        self._save_to_tmp(img)
-        return img
-
-
     def _process(self, img):
-        img = self._enlarge_image(img)
-        img = self._greyscale(img)
-        img = self._contrast(img)
+        img = enlarge_image(img, self.MIN_WIDTH)
+        img = greyscale(img)
+        img = contrast(img)
+        img = remove_noise(img)
+        self._save_to_tmp(img)
         return img
 
     def read(self):
